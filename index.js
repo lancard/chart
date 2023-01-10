@@ -4,18 +4,25 @@ const path = require('path');
 const dayjs = require('dayjs');
 const cheerio = require('cheerio');
 
-const downloadDelay = 200;
+const downloadDelay = 300;
 var downloadDelayCount = 0;
+var downloadCount = 0;
 
 function download(url, filePath) {
     setTimeout(() => {
         console.log(`download: ${url}`);
         fs.mkdirSync(path.dirname(filePath), { recursive: true });
+        downloadCount++;
         https.get(url, (response) => {
             response.pipe(fs.createWriteStream(filePath));
+            response.on('end', () => {
+                downloadCount--;
+                console.log(`complete(${downloadCount}): ${url}`);
+            });
         }).on('error', (e) => {
             console.log(`failed: ${url}`);
             console.error(e);
+            process.exit(7);
         });
     }, downloadDelayCount);
 
