@@ -4,11 +4,22 @@ const path = require('path');
 const dayjs = require('dayjs');
 const cheerio = require('cheerio');
 
+const downloadDelay = 200;
+var downloadDelayCount = 0;
+
 function download(url, filePath) {
-    fs.mkdirSync(path.dirname(filePath), { recursive: true });
-    https.get(url, (response) => {
-        response.pipe(fs.createWriteStream(filePath));
-    });
+    setTimeout(() => {
+        console.log(`download: ${url}`);
+        fs.mkdirSync(path.dirname(filePath), { recursive: true });
+        https.get(url, (response) => {
+            response.pipe(fs.createWriteStream(filePath));
+        }).on('error', (e) => {
+            console.log(`failed: ${url}`);
+            console.error(e);
+        });
+    }, downloadDelayCount);
+
+    downloadDelayCount += downloadDelay;
 }
 
 function downloadText(url, callback) {
@@ -47,14 +58,12 @@ const downloadMap = [
     "GEN/GEN 0.5 LIST OF HAND AMENDMENTS TO THE AIP.pdf",
     "GEN/GEN 0.6 TABLE OF CONTENTS TO PART I.pdf",
     "GEN/GEN 1.1 DESIGNATED AUTHORITIES.pdf",
-    "GEN/GEN 1.1 DESIGNATED AUTHORITIES.pdf",
     "GEN/GEN 1.2 ENTRY, TRANSIT AND DEPARTURE AIRCRAFT.pdf",
     "GEN/GEN 1.3 ENTRY, TRANSIT AND DEPARTURE OF PASSENGERS AND CREW.pdf",
     "GEN/GEN 1.4 ENTRY, TRANSIT AND DEPARTURE OF CARGO.pdf",
     "GEN/GEN 1.5 AIRCRAFT INSTRUMENTS, EQUIPMENT AND FLIGHT DOCUMENTS.pdf",
     "GEN/GEN 1.6 SUMMARY OF NATIONAL REGULATIONS AND INTERNATIONAL  AGREEMENTS.pdf",
     "GEN/GEN 1.7 DIFFERNCES FROM ICAO STANDARDS, RECOMMENDED.pdf",
-    "GEN/GEN 2.1 MEASURING SYSTEM, AIRCRAFT MARKINGS, HOLYDAYS.pdf",
     "GEN/GEN 2.1 MEASURING SYSTEM, AIRCRAFT MARKINGS, HOLYDAYS.pdf",
     "GEN/GEN 2.2 ABBREVIATIONS USED IN AIS PUBLICATIONS.pdf",
     "GEN/GEN 2.3 CHART SYMBOLS.pdf",
@@ -63,19 +72,16 @@ const downloadMap = [
     "GEN/GEN 2.6 CONVERSION OF UNITS OF MEASUREMENT.pdf",
     "GEN/GEN 2.7 SUNRISE SUNSET.pdf",
     "GEN/GEN 3.1 AERONAUTICAL INFORMATION SERVICES.pdf",
-    "GEN/GEN 3.1 AERONAUTICAL INFORMATION SERVICES.pdf",
     "GEN/GEN 3.2 AERONAUTICAL CHARTS.pdf",
     "GEN/GEN 3.3 AIRTRAFFIC SERVICES.pdf",
     "GEN/GEN 3.4 COMMUNICATIONS SERVICES.pdf",
     "GEN/GEN 3.5 METEOROLOGICAL SERVICES.pdf",
     "GEN/GEN 3.6 SEARCH AND RESCUE.pdf",
     "GEN/GEN 4.1 AERODROME CHARGE.pdf",
-    "GEN/GEN 4.1 AERODROME CHARGE.pdf",
     "GEN/GEN 4.2 AIR NAVIGATION SERVICES CHARGES.pdf",
 
     "ENR/ENR 0.0.pdf",
     "ENR/ENR 0.6.pdf",
-    "ENR/ENR 1.1.pdf",
     "ENR/ENR 1.1.pdf",
     "ENR/ENR 1.2.pdf",
     "ENR/ENR 1.3.pdf",
@@ -91,20 +97,16 @@ const downloadMap = [
     "ENR/ENR 1.13.pdf",
     "ENR/ENR 1.14.pdf",
     "ENR/ENR 2.1.pdf",
-    "ENR/ENR 2.1.pdf",
     "ENR/ENR 2.2.pdf",
-    "ENR/ENR 3.1.pdf",
     "ENR/ENR 3.1.pdf",
     "ENR/ENR 3.2.pdf",
     "ENR/ENR 3.3.pdf",
     "ENR/ENR 3.4.pdf",
     "ENR/ENR 4.1.pdf",
-    "ENR/ENR 4.1.pdf",
     "ENR/ENR 4.2.pdf",
     "ENR/ENR 4.3.pdf",
     "ENR/ENR 4.4.pdf",
     "ENR/ENR 4.5.pdf",
-    "ENR/ENR 5.1.pdf",
     "ENR/ENR 5.1.pdf",
     "ENR/ENR 5.2.pdf",
     "ENR/ENR 5.3.pdf",
@@ -169,14 +171,18 @@ airportList.forEach(airport => {
     downloadText(encodeURI(`https://aim.koca.go.kr/eaipPub/Package/${latestAiracDate}-AIRAC/html/eAIP/KR-AD-2.${airport}-en-GB.html`), function (body) {
         const $ = cheerio.load(body);
         const $pdfList = $("a[href$=\\.pdf]");
+        var textMap = {};
 
         for (var a = 0; a < $pdfList.length; a++) {
             let url = $pdfList.eq(a).attr('href');
             if (url[0] == '/') url = "https://aim.koca.go.kr" + url;
             url = url.split("http://").join("https://");
             let text = $pdfList.eq(a).text().trim();
+            textMap[text] = url;
+        }
 
-            download(url, `AIP/${latestAiracDate}/AD/${airport}/${text}.pdf`);
+        for (var text in textMap) {
+            download(textMap[text], `AIP/${latestAiracDate}/AD/${airport}/${text}.pdf`);
         }
     });
 });
