@@ -4,7 +4,7 @@ const path = require('path');
 const dayjs = require('dayjs');
 const cheerio = require('cheerio');
 
-const downloadDelay = 300;
+const downloadDelay = 1000;
 var downloadDelayCount = 0;
 var downloadCount = 0;
 
