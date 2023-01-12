@@ -4,7 +4,7 @@ const path = require('path');
 const dayjs = require('dayjs');
 const cheerio = require('cheerio');
 
-var downloadDelay = (process.env.CI ? 5000 : 100);
+var downloadDelay = (process.env.CI ? 10000 : 300);
 var downloadDelayCount = 0;
 var downloadCount = 0;
 
@@ -53,8 +53,7 @@ function getLatestAiracDate() {
 }
 
 // -------------------------------------
-
-const latestAiracDate = getLatestAiracDate();
+const latestAiracDate = (process.argv.length <= 2 ? getLatestAiracDate() : process.argv[2]);
 
 const downloadMap = [
     "GEN/GEN 0.0.pdf",
