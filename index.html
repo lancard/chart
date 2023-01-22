@@ -22,28 +22,8 @@
     </style>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <script src="https://bootswatch.com/_vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.7/dayjs.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.7/dayjs.min.js"></script> -->
     <script>
-        function getLatestAiracDateList() {
-            const firstDate = dayjs('2022-12-28', 'YYYY-MM-DD');
-            const now = dayjs().startOf('day');
-
-            var diffDate = now.diff(firstDate, 'day') % 28;
-
-            var effectiveAirac = now.add(-diffDate, 'day');
-
-            var ret = [];
-
-            while (true) {
-                ret.push(effectiveAirac.format("YYYY-MM-DD"));
-                effectiveAirac = effectiveAirac.add(-28, 'day');
-                if (effectiveAirac.isBefore(firstDate))
-                    break;
-            }
-
-            return ret;
-        }
-
         function download(filePath) {
             latestAiracDate = $("#airacList").val();
 
@@ -74,13 +54,6 @@
         }
 
         $(function () {
-            const airacList = getLatestAiracDateList();
-
-            airacList.forEach(e => {
-                $option = $("<option></option>").val(e).text(e);
-                $("#airacList").append($option);
-            })
-
             updateMetarAndRunway();
         });
     </script>
@@ -116,8 +89,11 @@
                 </ul>
                 <form class="d-flex">
                     <div class="input-group">
-                        <span class="input-group-text">AIRAC</span>
-                        <select class="form-select" id="airacList"></select>
+                        <span class="input-group-text">Effective Date</span>
+                        <select class="form-select" id="airacList">
+                            <option value="2023-01-12">2023-01-12</option>
+                            <option value="2022-12-28">2022-12-28</option>
+                        </select>
                     </div>
                 </form>
             </div>

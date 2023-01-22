@@ -9,11 +9,26 @@ var downloadDelayCount = 0;
 var downloadCount = 0;
 
 function download(url, filePath) {
+    try {
+        var info = fs.statSync(filePath);
+        if (info.size > 1000) {
+            console.log(`already downloaded. skip: ${url}`);
+            // return;
+        }
+    }
+    catch (e) {
+    }
+
     setTimeout(() => {
         console.log(`download: ${url}`);
         fs.mkdirSync(path.dirname(filePath), { recursive: true });
         downloadCount++;
         https.get(url, (response) => {
+            if (response.statusCode != 200) {
+                console.log(`failed: ${response.statusCode} ${url}`);
+                downloadCount--;
+                return;
+            }
             response.pipe(fs.createWriteStream(filePath));
             response.on('end', () => {
                 downloadCount--;
@@ -30,14 +45,19 @@ function download(url, filePath) {
 }
 
 function downloadText(url, callback) {
-    https.get(url, (res) => {
+    https.get(url, (response) => {
+        if (response.statusCode != 200) {
+            console.log(`failed: ${response.statusCode} ${url}`);
+            return;
+        }
+
         let body = '';
 
-        res.on('data', (data) => {
+        response.on('data', (data) => {
             body += data.toString();
         });
 
-        res.on('end', () => {
+        response.on('end', () => {
             callback(body);
         });
     });
@@ -149,6 +169,7 @@ const downloadMap = [
 ];
 
 downloadMap.forEach(element => {
+    download(encodeURI(`https://aim.koca.go.kr/eaipPub/Package/${latestAiracDate}/pdf/${element}`), `AIP/${latestAiracDate}/${element}`);
     download(encodeURI(`https://aim.koca.go.kr/eaipPub/Package/${latestAiracDate}-AIRAC/pdf/${element}`), `AIP/${latestAiracDate}/${element}`);
 });
 
@@ -173,24 +194,29 @@ const airportList = [
     "RKPD"
 ];
 
+function downloadAttachment(airport, body) {
+    const $ = cheerio.load(body);
+    const $pdfList = $("a[href$=\\.pdf]");
+    var textMap = {};
+
+    for (var a = 0; a < $pdfList.length; a++) {
+        let url = $pdfList.eq(a).attr('href');
+        if (url[0] == '/') url = "https://aim.koca.go.kr" + url;
+        url = url.split("http://").join("https://");
+        let text = $pdfList.eq(a).text().trim();
+        textMap[text] = url;
+    }
+
+    // console.dir(textMap);
+
+    for (var text in textMap) {
+        download(textMap[text], `AIP/${latestAiracDate}/AD/${airport}/${text}.pdf`);
+    }
+}
+
 airportList.forEach(airport => {
-    downloadText(encodeURI(`https://aim.koca.go.kr/eaipPub/Package/${latestAiracDate}-AIRAC/html/eAIP/KR-AD-2.${airport}-en-GB.html`), function (body) {
-        const $ = cheerio.load(body);
-        const $pdfList = $("a[href$=\\.pdf]");
-        var textMap = {};
-
-        for (var a = 0; a < $pdfList.length; a++) {
-            let url = $pdfList.eq(a).attr('href');
-            if (url[0] == '/') url = "https://aim.koca.go.kr" + url;
-            url = url.split("http://").join("https://");
-            let text = $pdfList.eq(a).text().trim();
-            textMap[text] = url;
-        }
-
-        for (var text in textMap) {
-            download(textMap[text], `AIP/${latestAiracDate}/AD/${airport}/${text}.pdf`);
-        }
-    });
+    downloadText(encodeURI(`https://aim.koca.go.kr/eaipPub/Package/${latestAiracDate}/html/eAIP/KR-AD-2.${airport}-en-GB.html`), (body) => { downloadAttachment(airport, body) });
+    downloadText(encodeURI(`https://aim.koca.go.kr/eaipPub/Package/${latestAiracDate}-AIRAC/html/eAIP/KR-AD-2.${airport}-en-GB.html`), (body) => { downloadAttachment(airport, body) });
 });
 
 
