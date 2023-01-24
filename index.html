@@ -22,6 +22,7 @@
     </style>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <script src="https://bootswatch.com/_vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="metar-parser.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.7/dayjs.min.js"></script> -->
     <script>
         function download(filePath) {
@@ -30,24 +31,150 @@
             window.open(`AIP/${latestAiracDate}/${filePath}`);
         }
 
+        function suggestRunwayList(airport, runway_object, wind) {
+            if (airport == "RKSI") {
+                if (wind > 60 && wind < 240) { return "15L(MAIN), 15R(MAIN), 16L, 16R"; }
+                else { return "33L(MAIN), 33R(MAIN), 34L, 34R"; }
+            }
+            if (airport == "RKSS") {
+                if (wind > 50 && wind < 230) { return "14L, 14R"; }
+                else { return "32L, 32R"; }
+            }
+            if (airport == "RKPC") {
+                if (wind >= 170 && wind < 330) {
+                    if (wind > 220) {
+                        return "25(MAIN), 31";
+                    }
+                    else {
+                        return "25";
+                    }
+                }
+                else {
+                    if (wind > 220) {
+                        return "07(MAIN), 31";
+                    }
+                    else {
+                        return "07";
+                    }
+                }
+            }
+            if (airport == "RKJB") {
+                if (wind >= 110 && wind <= 270) { return "19"; }
+                else { return "01"; }
+            }
+            if (airport == "RKPU") {
+                if (wind > 90 && wind < 270) { return "18"; }
+                else { return "36"; }
+            }
+            if (airport == "RKNY") {
+                if (wind > 60 && wind < 240) { return "15"; }
+                else { return "33"; }
+            }
+            if (airport == "RKJY") {
+                if (wind >= 80 && wind <= 260) { return "17"; }
+                else { return "35"; }
+            }
+            if (airport == "RKPK") {
+                if (wind > 90 && wind < 270) { return "18R(MAIN), 18L"; }
+                else { return "36L(MAIN), 36R"; }
+            }
+            if (airport == "RKTU") {
+                if (wind >= 150 && wind <= 330) { return "24R(MAIN), 24L"; }
+                else { return "06L(MAIN), 06R"; }
+            }
+            if (airport == "RKTN") {
+                if (wind >= 40 && wind <= 220) { return "13R(MAIN), 13L"; }
+                else { return "31L(MAIN), 31R"; }
+            }
+            if (airport == "RKJJ") {
+                if (wind >= 140 && wind <= 330) { return "22L(MAIN), 22R"; }
+                else { return "04R(MAIN), 04L"; }
+            }
+            if (airport == "RKJJ") {
+                if (wind >= 140 && wind <= 330) { return "22L(MAIN), 22R"; }
+                else { return "04R(MAIN), 04L"; }
+            }
+            if (airport == "RKTH") {
+                if (wind >= 200 && wind <= 360) { return "28"; }
+                else { return "10"; }
+            }
+            if (airport == "RKPS") {
+                if (wind >= 150 && wind <= 330) { return "24L, 24R"; }
+                else { return "06L, 06R"; }
+            }
+            if (airport == "RKNW") {
+                if (wind >= 130 && wind <= 290) { return "21"; }
+                else { return "03"; }
+            }
+            if (airport == "RKTL") {
+                if (wind >= 80 && wind <= 260) { return "17"; }
+                else { return "35"; }
+            }
+            if (airport == "RKTP") {
+                if (wind >= 130 && wind <= 320) { return "21L, 21R"; }
+                else { return "03L, 03R"; }
+            }
+            if (airport == "RKSO") {
+                if (wind >= 0 && wind <= 180) { return "09L, 09R"; }
+                else { return "27L, 27R"; }
+            }
+            if (airport == "RKTI") {
+                if (wind > 90 && wind < 270) { return "18L, 18R"; }
+                else { return "36L, 36R"; }
+            }
+            if (airport == "RKTY") {
+                if (wind >= 200 && wind <= 360) { return "28"; }
+                else { return "10"; }
+            }
+            if (airport == "RKSM") {
+                if (wind >= 110 && wind <= 270) { return "19, 20"; }
+                else { return "01, 02"; }
+            }
+            if (airport == "RKSW") {
+                if (wind > 60 && wind < 240) { return "15L, 15R"; }
+                else { return "33L, 33R"; }
+            }
+            if (airport == "RKJK") {
+                if (wind > 90 && wind < 270) { return "18"; }
+                else { return "36"; }
+            }
+            if (airport == "RKNN") {
+                console.dir(wind);
+                if (wind > 170 && wind < 350) { return "26"; }
+                else { return "08"; }
+            }
+        }
+
         function updateMetarAndRunway() {
             $.getJSON('https://airplane.mywire.org/metar.json', (airportList) => {
                 for (airport in airportList) {
-                    var $template = $("<tr><th></th><td></td><td class='text-start'></td></tr>");
+                    if (airport == "RKTF" || airport == "RKTE" || airport == "RKTB" || airport == "RKSQ" || airport == "RKSP" ||
+                        airport == "RKSF" || airport == "RKPM" || airport == "RKNL" || airport == "RKNF")
+                        continue;
+
+                    var $template = $("<tr><th></th><td style='color: blue;'></td><td style='color: green;'></td><td class='text-start'></td></tr>");
                     $template.attr("airport", airport);
                     $template.find("th").text(airport);
-                    $template.find("td").eq(1).text(airportList[airport].metar);
+                    $template.find("td").eq(2).text(airportList[airport].metar);
                     $template.appendTo("#metar tbody");
                 }
+
                 $.getJSON('https://airplane.mywire.org/runway.json', (runwayList) => {
                     for (airport in runwayList) {
                         var runwayStringList = [];
                         for (runway in runwayList[airport]) {
-                            if(runwayList[airport][runway].use)
+                            if (runwayList[airport][runway].use)
                                 runwayStringList.push(`${runway}`);
                         }
-                        console.log(runwayStringList.join(", "));
-                        $(`#metar tbody tr[airport=${airport}]`).find("td").eq(0).text(runwayStringList.join(", "))
+                        if ($(`#metar tbody tr[airport=${airport}]`).length == 0)
+                            continue;
+
+                        var metar = $(`#metar tbody tr[airport=${airport}]`).find("td").eq(2).text();
+                        var metarObject = metarParser(metar);
+                        var activeRunway = runwayStringList.join(", ");
+                        var suggestRunway = suggestRunwayList(airport, runwayList[airport], metarObject.wind.direction);
+                        $(`#metar tbody tr[airport=${airport}]`).find("td").eq(0).text(activeRunway);
+                        $(`#metar tbody tr[airport=${airport}]`).find("td").eq(1).text(suggestRunway);
                     }
                 });
             });
@@ -79,12 +206,12 @@
                         <a class="nav-link" href="#ad" data-bs-toggle="tab" data-bs-target="#ad" role="tab">AD</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="#chart" data-bs-toggle="tab" data-bs-target="#chart" role="tab"
-                            aria-selected="true">CHART</a>
+                        <a class="nav-link" href="#chart" data-bs-toggle="tab" data-bs-target="#chart"
+                            role="tab">CHART</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#metar" data-bs-toggle="tab" data-bs-target="#metar"
-                            role="tab">METAR</a>
+                        <a class="nav-link active" href="#metar" data-bs-toggle="tab" data-bs-target="#metar" role="tab"
+                            aria-selected="true">METAR</a>
                     </li>
                 </ul>
                 <form class="d-flex">
@@ -161,7 +288,8 @@
                 <tr>
                     <td>GEN 1.1</td>
                     <td>DESIGNATED AUTHORITIES
-                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 1.1 DESIGNATED AUTHORITIES.pdf')">
+                        <button class="btn btn-sm btn-primary"
+                            onclick="download('GEN/GEN 1.1 DESIGNATED AUTHORITIES.pdf')">
                             <i class="fa-solid fa-download"></i></button>
                     </td>
                 </tr>
@@ -665,7 +793,7 @@
             </table>
         </div>
 
-        <div class="tab-pane fade active show overflow-auto" id="chart" role="tabpanel">
+        <div class="tab-pane fade overflow-auto" id="chart" role="tabpanel">
             <table class="table table-bordered table-hover text-center align-middle">
                 <thead>
                     <tr class="table-dark">
@@ -1042,7 +1170,8 @@
                                 <i class="fa-solid fa-download"></i></button>
                         </td>
                         <td>
-                            <button class="btn btn-sm btn-primary" onclick="download('AD/RKNY/VISUAL APPROACH CHART.pdf')">
+                            <button class="btn btn-sm btn-primary"
+                                onclick="download('AD/RKNY/VISUAL APPROACH CHART.pdf')">
                                 <i class="fa-solid fa-download"></i></button>
                         </td>
                         <td>
@@ -1659,12 +1788,13 @@
             </table>
         </div>
 
-        <div class="tab-pane fade" id="metar" role="tabpanel">
+        <div class="tab-pane fade active show" id="metar" role="tabpanel">
             <table class="table table-bordered table-hover text-center align-middle">
                 <thead>
                     <tr class="table-dark">
                         <th>AIRPORT</th>
-                        <th>ACTIVE RUNWAY</th>
+                        <th>ACTIVE RUNWAY (BY AMOS)</th>
+                        <th>SUGGEST RUNWAY (BY WIND)</th>
                         <th>METAR</th>
                     </tr>
                 </thead>
