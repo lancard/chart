@@ -24,7 +24,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-RB876QBS4E"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
 
         gtag('config', 'G-RB876QBS4E');
@@ -148,20 +148,17 @@
                 else { return "36"; }
             }
             if (airport == "RKNN") {
-                console.dir(wind);
                 if (wind > 170 && wind < 350) { return "26"; }
                 else { return "08"; }
             }
+
+            return null;
         }
 
         function updateMetarAndRunway() {
             $.getJSON('https://airplane.mywire.org/metar.json', (airportList) => {
                 for (airport in airportList) {
-                    if (airport == "RKTF" || airport == "RKTE" || airport == "RKTB" || airport == "RKSQ" || airport == "RKSP" ||
-                        airport == "RKSF" || airport == "RKPM" || airport == "RKNL" || airport == "RKNF")
-                        continue;
-
-                    var $template = $("<tr><th></th><td style='color: blue;'></td><td style='color: green;'></td><td class='text-start'></td></tr>");
+                    var $template = $("<tr><th airport></th><td style='color: blue;' activeRunway></td><td style='color: green;'></td><td class='text-start' metarText></td></tr>");
                     $template.attr("airport", airport);
                     $template.find("th").text(airport);
                     $template.find("td").eq(2).text(airportList[airport].metar);
@@ -185,6 +182,20 @@
                         $(`#metar tbody tr[airport=${airport}]`).find("td").eq(0).text(activeRunway);
                         $(`#metar tbody tr[airport=${airport}]`).find("td").eq(1).text(suggestRunway);
                     }
+
+                    // move minor airport
+                    $("#metar tbody td[activeRunway]").each((idx, ee) => {
+                        if ($(ee).text() == "") {
+
+                            var airport = $(ee).parents("tr").find("th[airport]").text();
+                            var metarText = $(ee).parents("tr").find("td[metarText]").text();
+                            $(ee).parents("tr").remove();
+                            $metarMinor = $("<tr><th></th><td class='text-start'></td></tr>");
+                            $metarMinor.find("th").text(airport);
+                            $metarMinor.find("td").text(metarText);
+                            $metarMinor.appendTo("#metarMinor tbody");
+                        }
+                    });
                 });
             });
         }
@@ -216,11 +227,19 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#chart" data-bs-toggle="tab" data-bs-target="#chart"
-                            role="tab">CHART</a>
+                            role="tab">CHART(RKRR)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#zkkp" data-bs-toggle="tab" data-bs-target="#zkkp"
+                            role="tab">CHART(ZKKP)</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" href="#metar" data-bs-toggle="tab" data-bs-target="#metar" role="tab"
                             aria-selected="true">METAR</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#metarMinor" data-bs-toggle="tab" data-bs-target="#metarMinor"
+                            role="tab">METAR(MINOR)</a>
                     </li>
                 </ul>
                 <form class="d-flex">
@@ -1797,6 +1816,81 @@
             </table>
         </div>
 
+        <div class="tab-pane fade overflow-auto" id="zkkp" role="tabpanel">
+            <table class="table table-bordered table-hover text-center align-middle">
+                <thead>
+                    <tr class="table-dark">
+                        <th>AIRPORT</th>
+                        <th>AD</th>
+                        <th>GND MOVE</th>
+                        <th>PARK</th>
+                        <th>SID</th>
+                        <th>STAR</th>
+                        <th>INST APCH</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>ZKPY</td>
+                        <td>
+                            <a
+                                href="https://drive.google.com/file/d/1uO0sI6g6nr8FeCCTp1qW2ZR4Re2H01zE/view?usp=sharing">VIEW</a>
+                        </td>
+                        <td>
+                            <a
+                                href="https://drive.google.com/file/d/1uO0sI6g6nr8FeCCTp1qW2ZR4Re2H01zE/view?usp=sharing">VIEW</a>
+                        </td>
+                        <td>
+                            <a
+                                href="https://drive.google.com/file/d/1uO0sI6g6nr8FeCCTp1qW2ZR4Re2H01zE/view?usp=sharing">VIEW</a>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <a
+                                href="https://docs.google.com/drawings/d/1XPadjZpe-4uQ8-ls_y9AacdV1WtjSSictudLyMvYiT4/edit?usp=sharing">
+                                [VIEW - ILS 35]</a><br>
+                            <a
+                                href="https://docs.google.com/drawings/d/186aWUvRcJOuadxu6QEcsDWyz5M4Wc4T5qhz_lU0hkIs/edit?usp=sharing">
+                                [VIEW - ILS/DME 17]</a><br>
+                            <a
+                                href="https://docs.google.com/drawings/d/1cpO68EiuOin4n9P7b1gCgpXThzVehP0d31BKfF2DOZ8/edit?usp=sharing">
+                                [VIEW - RNP 35]</a><br>
+                            <a
+                                href="https://docs.google.com/drawings/d/15aEW6B54jhTT7e-LEOelqpBH89iVGs3tBEUewCouZyQ/edit?usp=sharing">
+                                [VIEW - RNP 17]</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>ZKWS</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <a
+                                href="https://docs.google.com/drawings/d/15SYvGTXsQFpewbWRBK-QpAoeYWUy3Xj9zZ8UHC4CBHE/edit?usp=sharing">
+                                [VIEW - SID]</a>
+                        </td>
+                        <td>
+                            <a
+                                href="https://docs.google.com/drawings/d/1_P7gqcQbMTlIcXF619k1AiOgMNr0WRV7MagiftFtEL4/edit?usp=sharing">
+                                [VIEW - STAR]</a>
+                        </td>
+                        <td>
+                            <a
+                                href="https://docs.google.com/drawings/d/1BlTYFSnlrGW5e2FgEwv7b2Zoa26dqTEMzydzN-crDEM/edit?usp=sharing">
+                                [VIEW - ILS 15L]</a><br>
+                            <a
+                                href="https://docs.google.com/drawings/d/1Cy27EQnWx6FSwibdAlG-JXoSJq5k0cQ7E345uVKv09A/edit?usp=sharing">
+                                [VIEW - RNAV]</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
         <div class="tab-pane fade active show" id="metar" role="tabpanel">
             <table class="table table-bordered table-hover text-center align-middle">
                 <thead>
@@ -1813,6 +1907,19 @@
             </table>
         </div>
 
+        <div class="tab-pane fade" id="metarMinor" role="tabpanel">
+            <table class="table table-bordered table-hover text-center align-middle">
+                <thead>
+                    <tr class="table-dark">
+                        <th>AIRPORT</th>
+                        <th>METAR</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
 
 
     </div>
