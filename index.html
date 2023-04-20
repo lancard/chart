@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>AIP</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="https://bootswatch.com/5/cerulean/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <style>
+        .table td {
+            padding-left: 2px;
+            padding-right: 2px;
+            white-space: nowrap;
+        }
+
+        .table th {
+            padding-left: 2px;
+            padding-right: 2px;
+        }
+    </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RB876QBS4E"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-RB876QBS4E');
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <script src="https://bootswatch.com/_vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="metar-parser.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.7/dayjs.min.js"></script> -->
+    <script>
+        function download(filePath) {
+            latestAiracDate = $("#airacList").val();
+
+            window.open(`AIP/${latestAiracDate}/${filePath}`);
+        }
+
+        function suggestRunwayList(airport, runway_object, wind) {
+            if (airport == "RKSI") {
+                if (wind > 60 && wind < 240) { return "15L(MAIN), 15R(MAIN), 16L, 16R"; }
+                else { return "33L(MAIN), 33R(MAIN), 34L, 34R"; }
+            }
+            if (airport == "RKSS") {
+                if (wind > 50 && wind < 230) { return "14L, 14R"; }
+                else { return "32L, 32R"; }
+            }
+            if (airport == "RKPC") {
+                if (wind >= 170 && wind < 330) {
+                    if (wind > 220) {
+                        return "25(MAIN), 31";
+                    }
+                    else {
+                        return "25";
+                    }
+                }
+                else {
+                    if (wind > 220) {
+                        return "07(MAIN), 31";
+                    }
+                    else {
+                        return "07";
+                    }
+                }
+            }
+            if (airport == "RKJB") {
+                if (wind >= 110 && wind <= 270) { return "19"; }
+                else { return "01"; }
+            }
+            if (airport == "RKPU") {
+                if (wind > 90 && wind < 270) { return "18"; }
+                else { return "36"; }
+            }
+            if (airport == "RKNY") {
+                if (wind > 60 && wind < 240) { return "15"; }
+                else { return "33"; }
+            }
+            if (airport == "RKJY") {
+                if (wind >= 80 && wind <= 260) { return "17"; }
+                else { return "35"; }
+            }
+            if (airport == "RKPK") {
+                if (wind > 90 && wind < 270) { return "18R(MAIN), 18L"; }
+                else { return "36L(MAIN), 36R"; }
+            }
+            if (airport == "RKTU") {
+                if (wind >= 150 && wind <= 330) { return "24R(MAIN), 24L"; }
+                else { return "06L(MAIN), 06R"; }
+            }
+            if (airport == "RKTN") {
+                if (wind >= 40 && wind <= 220) { return "13R(MAIN), 13L"; }
+                else { return "31L(MAIN), 31R"; }
+            }
+            if (airport == "RKJJ") {
+                if (wind >= 140 && wind <= 330) { return "22L(MAIN), 22R"; }
+                else { return "04R(MAIN), 04L"; }
+            }
+            if (airport == "RKJJ") {
+                if (wind >= 140 && wind <= 330) { return "22L(MAIN), 22R"; }
+                else { return "04R(MAIN), 04L"; }
+            }
+            if (airport == "RKTH") {
+                if (wind >= 200 && wind <= 360) { return "28"; }
+                else { return "10"; }
+            }
+            if (airport == "RKPS") {
+                if (wind >= 150 && wind <= 330) { return "24L, 24R"; }
+                else { return "06L, 06R"; }
+            }
+            if (airport == "RKNW") {
+                if (wind >= 130 && wind <= 290) { return "21"; }
+                else { return "03"; }
+            }
+            if (airport == "RKTL") {
+                if (wind >= 80 && wind <= 260) { return "17"; }
+                else { return "35"; }
+            }
+            if (airport == "RKTP") {
+                if (wind >= 130 && wind <= 320) { return "21L, 21R"; }
+                else { return "03L, 03R"; }
+            }
+            if (airport == "RKSO") {
+                if (wind >= 0 && wind <= 180) { return "09L, 09R"; }
+                else { return "27L, 27R"; }
+            }
+            if (airport == "RKTI") {
+                if (wind > 90 && wind < 270) { return "18L, 18R"; }
+                else { return "36L, 36R"; }
+            }
+            if (airport == "RKTY") {
+                if (wind >= 200 && wind <= 360) { return "28"; }
+                else { return "10"; }
+            }
+            if (airport == "RKSM") {
+                if (wind >= 110 && wind <= 270) { return "19, 20"; }
+                else { return "01, 02"; }
+            }
+            if (airport == "RKSW") {
+                if (wind > 60 && wind < 240) { return "15L, 15R"; }
+                else { return "33L, 33R"; }
+            }
+            if (airport == "RKJK") {
+                if (wind > 90 && wind < 270) { return "18"; }
+                else { return "36"; }
+            }
+            if (airport == "RKNN") {
+                if (wind > 170 && wind < 350) { return "26"; }
+                else { return "08"; }
+            }
+
+            return null;
+        }
+
+        function updateMetarAndRunway() {
+            $.getJSON('https://airplane.mywire.org/metar.json', (airportList) => {
+                for (airport in airportList) {
+                    var $template = $("<tr><th airport></th><td style='color: blue;' activeRunway></td><td style='color: green;'></td><td class='text-start' metarText></td></tr>");
+                    $template.attr("airport", airport);
+                    $template.find("th").text(airport);
+                    $template.find("td").eq(2).text(airportList[airport].metar);
+                    $template.appendTo("#metar tbody");
+                }
+
+                $.getJSON('https://airplane.mywire.org/runway.json', (runwayList) => {
+                    for (airport in runwayList) {
+                        var runwayStringList = [];
+                        for (runway in runwayList[airport]) {
+                            if (runwayList[airport][runway].use)
+                                runwayStringList.push(`${runway}`);
+                        }
+                        if ($(`#metar tbody tr[airport=${airport}]`).length == 0)
+                            continue;
+
+                        var metar = $(`#metar tbody tr[airport=${airport}]`).find("td").eq(2).text();
+                        var metarObject = metarParser(metar);
+                        var activeRunway = runwayStringList.join(", ");
+                        var suggestRunway = suggestRunwayList(airport, runwayList[airport], metarObject.wind.direction);
+                        $(`#metar tbody tr[airport=${airport}]`).find("td").eq(0).text(activeRunway);
+                        $(`#metar tbody tr[airport=${airport}]`).find("td").eq(1).text(suggestRunway);
+                    }
+
+                    // move minor airport
+                    $("#metar tbody td[activeRunway]").each((idx, ee) => {
+                        if ($(ee).text() == "") {
+
+                            var airport = $(ee).parents("tr").find("th[airport]").text();
+                            var metarText = $(ee).parents("tr").find("td[metarText]").text();
+                            $(ee).parents("tr").remove();
+                            $metarMinor = $("<tr><th></th><td class='text-start'></td></tr>");
+                            $metarMinor.find("th").text(airport);
+                            $metarMinor.find("td").text(metarText);
+                            $metarMinor.appendTo("#metarMinor tbody");
+                        }
+                    });
+                });
+            });
+        }
+
+        $(function () {
+            updateMetarAndRunway();
+        });
+    </script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">e-AIP</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                <ul class="navbar-nav me-auto" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#gen" data-bs-toggle="tab" data-bs-target="#gen" role="tab">GEN</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#enr" data-bs-toggle="tab" data-bs-target="#enr" role="tab">ENR</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#ad" data-bs-toggle="tab" data-bs-target="#ad" role="tab">AD</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#chart" data-bs-toggle="tab" data-bs-target="#chart"
+                            role="tab">CHART(RKRR)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#zkkp" data-bs-toggle="tab" data-bs-target="#zkkp"
+                            role="tab">CHART(ZKKP)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#metar" data-bs-toggle="tab" data-bs-target="#metar" role="tab"
+                            aria-selected="true">METAR</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#metarMinor" data-bs-toggle="tab" data-bs-target="#metarMinor"
+                            role="tab">METAR(MINOR)</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <div class="input-group">
+                        <span class="input-group-text">Effective Date</span>
+                        <select class="form-select" id="airacList">
+                            <option value="2023-04-19">2023-04-19</option>
+                            <option value="2023-04-06">2023-04-06</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid tab-content p-2">
+        <div id="gen" class="tab-pane fade" role="tabpanel">
+            <h4>GEN</h4>
+            <table class="table table-bordered table-hover">
+                <tr class="table-active">
+                    <th>GEN 0</th>
+                    <td>PREFACE</td>
+                </tr>
+                <tr>
+                    <td>GEN 0.1</td>
+                    <td>PREFACE
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 0.1.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 0.2</td>
+                    <td>RECORD OF AIP AMENDMENTS
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 0.2.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 0.3</td>
+                    <td>RECORD OF AIP SUPPLEMENT
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 0.3.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 0.4</td>
+                    <td>CHECKLIST OF AIP PAGES
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 0.4.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 0.5</td>
+                    <td>LIST OF HAND AMENDMENTS TO THE AIP
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 0.5.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 0.6</td>
+                    <td>TABLE OF CONTENTS TO PART 1
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 0.6.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr class="table-active">
+                    <th>GEN 1</th>
+                    <td>NATIONAL REGULATIONS AND REQUIREMENTS</td>
+                </tr>
+                <tr>
+                    <td>GEN 1.1</td>
+                    <td>DESIGNATED AUTHORITIES
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 1.1.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 1.2</td>
+                    <td>ENTRY, TRANSIT AND DEPARTURE OF AIRCRAFT
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 1.2.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 1.3</td>
+                    <td>ENTRY, TRANSIT AND DEPARTURE OF PASSENGERS AND CREW
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 1.3.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 1.4</td>
+                    <td>ENTRY, TRANSIT AND DEPARTURE OF CARGO
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 1.4.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 1.5</td>
+                    <td>AIRCRAFT INSTRUMENTS, EQUIPMENT AND FLIGHT DOCUMENTS
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 1.5.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 1.6</td>
+                    <td>SUMMARY OF NATIONAL REGULATIONS AND INTERNATIONAL AGREEMENTS/CONVENTIONS<button
+                            class="btn btn-sm btn-primary" onclick="download('GEN/GEN 1.6.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 1.7</td>
+                    <td>DIFFERENCES FROM ICAO STANDARDS, RECOMMENDED PRACTICES AND PROCEDURES<button
+                            class="btn btn-sm btn-primary" onclick="download('GEN/GEN 1.7.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr class="table-active">
+                    <th>GEN 2</th>
+                    <td>TABLES AND CODES</td>
+                </tr>
+                <tr>
+                    <td>GEN 2.1</td>
+                    <td>MEASURING SYSTEM, AIRCRAFT MARKINGS, HOLIDAYS
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 2.1.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 2.2</td>
+                    <td>ABBREVIATIONS USED IN AIS PUBLICATIONS
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 2.2.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 2.3</td>
+                    <td>CHART SYMBOLS
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 2.3.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 2.4</td>
+                    <td>LOCATION INDICATORS
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 2.4.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 2.5</td>
+                    <td>LIST OF RADIO NAVIGATION AIDS
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 2.5.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 2.6</td>
+                    <td>CONVERSIONS OF UNITS OF MEASUREMENT
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 2.6.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 2.7</td>
+                    <td>SUNRISE/SUNSET
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 2.7.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr class="table-active">
+                    <th>GEN 3</th>
+                    <td>SERVICES</td>
+                </tr>
+                <tr>
+                    <td>GEN 3.1</td>
+                    <td>AERONAUTICAL INFORMATION SERVICES
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 3.1.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 3.2</td>
+                    <td>AERONAUTICAL CHARTS
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 3.2.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 3.3</td>
+                    <td>AIR TRAFFIC SERVICES
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 3.3.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 3.4</td>
+                    <td>COMMUNICATIONS SERVICES
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 3.4.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 3.5</td>
+                    <td>METEOROLOGICAL SERVICES
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 3.5.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 3.6</td>
+                    <td>SEARCH AND RESCUE SERVICES
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 3.6.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr class="table-active">
+                    <th>GEN 4</th>
+                    <td>CHARGES FOR AERODROMES/HELIPORTS AND AIR NAVIGATION SERVICES</td>
+                </tr>
+                <tr>
+                    <td>GEN 4.1</td>
+                    <td>AERODROME CHARGES
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 4.1.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GEN 4.2</td>
+                    <td>AIR NAVIGATION SERVICES CHARGES
+                        <button class="btn btn-sm btn-primary" onclick="download('GEN/GEN 4.2.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="enr" role="tabpanel">
+            <table class="table table-bordered table-hover">
+                <tr class="table-active">
+                    <th>ENR 0</th>
+                    <td>TABLE OF CONTENTS TO PART 2</td>
+                </tr>
+                <tr>
+                    <td>ENR 0.6</td>
+                    <td>Table of Contents to Part 2
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 0.6.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr class="table-active">
+                    <th>ENR 1</th>
+                    <td>GENERAL RULES AND PROCEDURES </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.1</td>
+                    <td>GENERAL RULES
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.1.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.2</td>
+                    <td>VISUAL FLIGHT RULES
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.2.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.3</td>
+                    <td>INSTRUMENT FLIGHTS RULES
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.3.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.4</td>
+                    <td>ATS AIRSPACE CLASSIFICATION AND DESCRIPTION
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.4.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.5</td>
+                    <td>HOLDING, APPROACH AND DEPARTURE PROCEDURES
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.5.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.6</td>
+                    <td>ATC SURVEILLANCE
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.6.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.7</td>
+                    <td>ALTIMETER SETTING PROCEDURES
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.7.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.8</td>
+                    <td>REGIONAL SUPPLEMENTARY PROCEDURES
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.8.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.9</td>
+                    <td>AIR TRAFFIC FLOW MANAGEMENT AND AIRSPACE MANAGEMENT
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.9.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.10</td>
+                    <td>FLIGHT PLANNING
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.10.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.11</td>
+                    <td>ADDRESSING OF FLIGHT PLAN MESSAGES
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.11.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.12</td>
+                    <td>INTERCEPTION OF CIVIL AIRCRAFT
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.12.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.13</td>
+                    <td>UNLAWFUL INTERFERENCE
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.13.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 1.14</td>
+                    <td>AIR TRAFFIC INCIDENTS
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 1.14.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr class="table-active">
+                    <th>ENR 2</th>
+                    <td>AIR TRAFFIC SERVICES AIRSPACE</td>
+                </tr>
+                <tr>
+                    <td>ENR 2.1</td>
+                    <td>AIR TRAFFIC SERVICES AIRSPACE
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 2.1.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 2.2</td>
+                    <td>OTHER REGULATED AIRSPACE
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 2.2.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr class="table-active">
+                    <th>ENR 3</th>
+                    <td>ROUTES</td>
+                </tr>
+                <tr>
+                    <td>ENR 3.1</td>
+                    <td>CONVENTIONAL NAVIGATION ROUTES
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 3.1.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 3.2</td>
+                    <td>AREA NAVIGATION (RNAV) ROUTES
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 3.2.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 3.3</td>
+                    <td>OTHER ROUTES
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 3.3.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 3.4</td>
+                    <td>EN-ROUTE HOLDING
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 3.4.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr class="table-active">
+                    <th>ENR 4</th>
+                    <td>RADIO NAVIGATION AIDS/SYSTEMS</td>
+                </tr>
+                <tr>
+                    <td>ENR 4.1</td>
+                    <td>RADIO NAVIGATION AIDS/SYSTEMS
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 4.1.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 4.2</td>
+                    <td>SPECIAL NAVIGATION SYSTEM
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 4.2.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 4.3</td>
+                    <td>GLOBAL NAVIGATION SATELLITE SYSTEM(GNSS)
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 4.3.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 4.4</td>
+                    <td>NAME-CODE DESIGNATORS FOR SIGNIFICANT POINTS
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 4.4.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 4.5</td>
+                    <td>AERONAUTICAL GROUND LIGHTS - ENROUTE
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 4.5.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr class="table-active">
+                    <th>ENR 5</th>
+                    <td>NAVIGATION WARNINGS</td>
+                </tr>
+                <tr>
+                    <td>ENR 5.1</td>
+                    <td>NAVIGATION WARNING
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 5.1.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 5.2</td>
+                    <td>MILITARY EXERCISE AND TRAINING AREAS AND AIR DEFFENCE IDENTIFICATION ZONE(ADIZ)
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 5.2.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 5.3</td>
+                    <td>OTHER ACTIVITIES OF A DANGEROUS NATURE AND OTHER POTENTIAL HAZARDS
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 5.3.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 5.4</td>
+                    <td>AIR NAVIGATION OBSTACLES - EN-ROUTE (Height 100m AGL or higher)
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 5.4.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 5.5</td>
+                    <td>AERIAL SPORTING AND RECREATIONAL ACTIVITIES
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 5.5.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ENR 5.6</td>
+                    <td>BIRD MIGRATION AND AREAS WITH SENSITIVE FAUNA
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 5.6.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr class="table-active">
+                    <th>ENR 6</th>
+                    <td>EN-ROUTE CHARTS</td>
+                </tr>
+                <tr>
+                    <td>ENR 6.1</td>
+                    <td>EN-ROUTE CHARTS
+                        <button class="btn btn-sm btn-primary" onclick="download('ENR/ENR 6.1.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="ad" role="tabpanel">
+            <table class="table table-bordered table-hover">
+                <tr class="table-active">
+                    <th>AD 0</th>
+                    <td>PREFACE</td>
+                </tr>
+                <tr>
+                    <td>AD 0.6</td>
+                    <td>Table of Contents to Part 3
+                        <button class="btn btn-sm btn-primary" onclick="download('AD/AD 0.6.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr class="table-active">
+                    <th>AD 1</th>
+                    <td>AERODROME - INTRODUCTION</td>
+                </tr>
+                <tr>
+                    <td>AD 1.1</td>
+                    <td>AERODROME - INTRODUCTION
+                        <button class="btn btn-sm btn-primary" onclick="download('AD/AD 1.1.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>AD 1.2</td>
+                    <td>RESCUE AND FIRE FIGHTING SERVICES, SNOW PLAN AND RUNWAY SURFACE CONDITION ASSESSMENT AND
+                        REPORTING
+                        <button class="btn btn-sm btn-primary" onclick="download('AD/AD 1.2.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>AD 1.3</td>
+                    <td>INDEX TO AERODROMES
+                        <button class="btn btn-sm btn-primary" onclick="download('AD/AD 1.3.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>AD 1.4</td>
+                    <td>GROUPING OF AERODROMES
+                        <button class="btn btn-sm btn-primary" onclick="download('AD/AD 1.4.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>AD 1.5</td>
+                    <td>STATUS OF CERTIFICATION ON AERODROME
+                        <button class="btn btn-sm btn-primary" onclick="download('AD/AD 1.5.pdf')">
+                            <i class="fa-solid fa-download"></i></button>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+
+        <div class="tab-pane fade overflow-auto" id="chart" role="tabpanel">
+            <table class="table table-bordered table-hover text-center align-middle">
+                <thead>
+                    <tr class="table-dark">
+                        <th>AIRPORT</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            var latestAiracDate = $("#airacList").val();
+
+            $.getJSON(`AIP/${latestAiracDate}/AD/chartInformation.json`, (data) => {
+                // generate chart header
+                for (var name in data.RKSI) {
+                    $("<th></th>").text(name).appendTo("#chart thead tr");
+                }
+
+                // generate chart body
+                for (var airport in data) {
+                    $tr = $("<tr></tr>");
+                    $(`<td>${airport}</td>`).appendTo($tr);
+                    for (var name in data[airport]) {
+                        if (data[airport][name]) {
+                            $(`<td><button class="btn btn-sm btn-primary" onclick="download('AD/${airport}/${name}.pdf')"><i class="fa-solid fa-download"></i></button></td>`)
+                                .appendTo($tr);
+                        }
+                        else {
+                            $(`<td></td>`)
+                                .appendTo($tr);
+                        }
+                    }
+                    $tr.appendTo("#chart tbody")
+                }
+            });
+
+        </script>
+
+        <div class="tab-pane fade overflow-auto" id="zkkp" role="tabpanel">
+            <table class="table table-bordered table-hover text-center align-middle">
+                <thead>
+                    <tr class="table-dark">
+                        <th>AIRPORT</th>
+                        <th>AD</th>
+                        <th>GND MOVE</th>
+                        <th>PARK</th>
+                        <th>SID</th>
+                        <th>STAR</th>
+                        <th>INST APCH</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>ZKPY</td>
+                        <td>
+                            <a
+                                href="https://docs.google.com/drawings/d/1i5-MPOAG82jDGAm02Vgn1sIow4qArLh8jdKC36zkJ9k/edit?usp=sharing">VIEW</a>
+                        </td>
+                        <td>
+                            <a
+                                href="https://docs.google.com/drawings/d/1i5-MPOAG82jDGAm02Vgn1sIow4qArLh8jdKC36zkJ9k/edit?usp=sharing">VIEW</a>
+                        </td>
+                        <td>
+                            <a
+                                href="https://docs.google.com/drawings/d/1pS3pQOvoIkasIqEVvwI4QhE8Xoiz72WIcp7O6ESl5Fo/edit?usp=sharing">VIEW</a>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <a
+                                href="https://docs.google.com/drawings/d/1XPadjZpe-4uQ8-ls_y9AacdV1WtjSSictudLyMvYiT4/edit?usp=sharing">
+                                [VIEW - ILS 35]</a><br>
+                            <a
+                                href="https://docs.google.com/drawings/d/186aWUvRcJOuadxu6QEcsDWyz5M4Wc4T5qhz_lU0hkIs/edit?usp=sharing">
+                                [VIEW - ILS/DME 17]</a><br>
+                            <a
+                                href="https://docs.google.com/drawings/d/1cpO68EiuOin4n9P7b1gCgpXThzVehP0d31BKfF2DOZ8/edit?usp=sharing">
+                                [VIEW - RNP 35]</a><br>
+                            <a
+                                href="https://docs.google.com/drawings/d/15aEW6B54jhTT7e-LEOelqpBH89iVGs3tBEUewCouZyQ/edit?usp=sharing">
+                                [VIEW - RNP 17]</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>ZKWS</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <a
+                                href="https://docs.google.com/drawings/d/15SYvGTXsQFpewbWRBK-QpAoeYWUy3Xj9zZ8UHC4CBHE/edit?usp=sharing">
+                                [VIEW - SID]</a>
+                        </td>
+                        <td>
+                            <a
+                                href="https://docs.google.com/drawings/d/1_P7gqcQbMTlIcXF619k1AiOgMNr0WRV7MagiftFtEL4/edit?usp=sharing">
+                                [VIEW - STAR]</a>
+                        </td>
+                        <td>
+                            <a
+                                href="https://docs.google.com/drawings/d/1BlTYFSnlrGW5e2FgEwv7b2Zoa26dqTEMzydzN-crDEM/edit?usp=sharing">
+                                [VIEW - ILS 15L]</a><br>
+                            <a
+                                href="https://docs.google.com/drawings/d/1Cy27EQnWx6FSwibdAlG-JXoSJq5k0cQ7E345uVKv09A/edit?usp=sharing">
+                                [VIEW - RNAV]</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="tab-pane fade active show" id="metar" role="tabpanel">
+            <table class="table table-bordered table-hover text-center align-middle">
+                <thead>
+                    <tr class="table-dark">
+                        <th>AIRPORT</th>
+                        <th>ACTIVE RUNWAY (BY AMOS)</th>
+                        <th>SUGGEST RUNWAY (BY WIND)</th>
+                        <th>METAR</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="metarMinor" role="tabpanel">
+            <table class="table table-bordered table-hover text-center align-middle">
+                <thead>
+                    <tr class="table-dark">
+                        <th>AIRPORT</th>
+                        <th>METAR</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+name: build-general
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          
+      - run: npm install
+
+      - run: node index.js
+
+      - name: git commit and push
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com    
+          git add .
+          git commit -m "charts update"
+          git push

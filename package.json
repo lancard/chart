@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "dayjs": "^1.11.7",
+    "pdf-merger-js": "^4.3.0"
+  }
+}
