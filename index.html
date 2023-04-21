@@ -246,8 +246,6 @@
                     <div class="input-group">
                         <span class="input-group-text">Effective Date</span>
                         <select class="form-select" id="airacList">
-                            <option value="2023-04-19">2023-04-19</option>
-                            <option value="2023-04-06">2023-04-06</option>
                         </select>
                     </div>
                 </form>
@@ -812,32 +810,37 @@
         </div>
 
         <script>
-            var latestAiracDate = $("#airacList").val();
+            $.getJSON(`AIP/effectiveDateInformation.json`, (data) => {
+                data.forEach(e => {
+                    $(`<option></option>`).attr("value", e).text(e).appendTo("#airacList");
+                });
 
-            $.getJSON(`AIP/${latestAiracDate}/AD/chartInformation.json`, (data) => {
-                // generate chart header
-                for (var name in data.RKSI) {
-                    $("<th></th>").text(name).appendTo("#chart thead tr");
-                }
+                var latestAiracDate = data[0];
 
-                // generate chart body
-                for (var airport in data) {
-                    $tr = $("<tr></tr>");
-                    $(`<td>${airport}</td>`).appendTo($tr);
-                    for (var name in data[airport]) {
-                        if (data[airport][name]) {
-                            $(`<td><button class="btn btn-sm btn-primary" onclick="download('AD/${airport}/${name}.pdf')"><i class="fa-solid fa-download"></i></button></td>`)
-                                .appendTo($tr);
-                        }
-                        else {
-                            $(`<td></td>`)
-                                .appendTo($tr);
-                        }
+                $.getJSON(`AIP/${latestAiracDate}/AD/chartInformation.json`, (data) => {
+                    // generate chart header
+                    for (var name in data.RKSI) {
+                        $("<th></th>").text(name).appendTo("#chart thead tr");
                     }
-                    $tr.appendTo("#chart tbody")
-                }
-            });
 
+                    // generate chart body
+                    for (var airport in data) {
+                        $tr = $("<tr></tr>");
+                        $(`<td>${airport}</td>`).appendTo($tr);
+                        for (var name in data[airport]) {
+                            if (data[airport][name]) {
+                                $(`<td><button class="btn btn-sm btn-primary" onclick="download('AD/${airport}/${name}.pdf')"><i class="fa-solid fa-download"></i></button></td>`)
+                                    .appendTo($tr);
+                            }
+                            else {
+                                $(`<td></td>`)
+                                    .appendTo($tr);
+                            }
+                        }
+                        $tr.appendTo("#chart tbody")
+                    }
+                });
+            });
         </script>
 
         <div class="tab-pane fade overflow-auto" id="zkkp" role="tabpanel">

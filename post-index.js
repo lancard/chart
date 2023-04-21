@@ -75,4 +75,6 @@ const effectiveAiracDate = process.argv[2].substring(0, 10);
 
     fs.writeFileSync(`AIP/${effectiveAiracDate}/AD/chartInformation.json`, JSON.stringify(map, null, '\t'));
 
+    // generate effective date
+    fs.writeFileSync(`AIP/effectiveDateInformation.json`, JSON.stringify(fs.readdirSync('AIP').filter(e => e.length == 10).sort().reverse(), null, '\t'));
 })();
