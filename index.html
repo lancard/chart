@@ -156,16 +156,16 @@
         }
 
         function updateMetarAndRunway() {
-            $.getJSON('https://airplane.mywire.org/metar.json', (airportList) => {
-                for (airport in airportList) {
+            $.getJSON('https://lancard.github.io/get_metar/metar.json', (metarList) => {
+                for (airport in metarList) {
                     var $template = $("<tr><th airport></th><td style='color: blue;' activeRunway></td><td style='color: green;'></td><td class='text-start' metarText></td></tr>");
                     $template.attr("airport", airport);
                     $template.find("th").text(airport);
-                    $template.find("td").eq(2).text(airportList[airport].metar);
+                    $template.find("td").eq(2).text(metarList[airport]);
                     $template.appendTo("#metar tbody");
                 }
 
-                $.getJSON('https://airplane.mywire.org/runway.json', (runwayList) => {
+                $.getJSON('https://lancard.github.io/get_runway/runway.json', (runwayList) => {
                     for (airport in runwayList) {
                         var runwayStringList = [];
                         for (runway in runwayList[airport]) {
