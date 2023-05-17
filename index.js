@@ -295,7 +295,7 @@ const localPrefix = `./AIP/${effectiveAiracDate.substring(0, 10)}`;
 
 function parseAerodromeHtml(body) {
     const $ = cheerio.load(body);
-    const $a = $("div.Figure-Left:not(.AmdtDeletedNon-AIRAC):not(.AmdtDeleted) a")
+    const $a = $("div.Figure-Left:not(.AmdtDeletedNon-AIRAC):not(.AmdtDeleted):not(.AmdtDeletedAIRAC) a")
     const downloadMap = {};
 
     for (var a = 0; a < $a.length; a++) {
