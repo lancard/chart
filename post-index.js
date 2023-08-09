@@ -10,25 +10,17 @@ if (process.argv.length <= 2) {
 const effectiveAiracDate = process.argv[2].substring(0, 10);
 
 (async () => {
-    // merge RKSI area chart
-    var rksiMerger = new PDFMerger();
-    await rksiMerger.add(`AIP/${effectiveAiracDate}/AD/RKSI/AREA CHART - ICAO (DEP).pdf`);
-    await rksiMerger.add(`AIP/${effectiveAiracDate}/AD/RKSI/AREA CHART - ICAO (ARR).pdf`);
-
-    await rksiMerger.save(`AIP/${effectiveAiracDate}/AD/RKSI/AREA CHART.pdf`);
-
-    fs.unlinkSync(`AIP/${effectiveAiracDate}/AD/RKSI/AREA CHART - ICAO (DEP).pdf`)
-    fs.unlinkSync(`AIP/${effectiveAiracDate}/AD/RKSI/AREA CHART - ICAO (ARR).pdf`)
-
     // merge RKSS area chart
-    var rkssMerger = new PDFMerger();
-    await rkssMerger.add(`AIP/${effectiveAiracDate}/AD/RKSS/AREA CHART - ICAO (DEP).pdf`);
-    await rkssMerger.add(`AIP/${effectiveAiracDate}/AD/RKSS/AREA CHART - ICAO (ARR).pdf`);
+    if (!fs.existsSync(`AIP/${effectiveAiracDate}/AD/RKSS/AREA CHART.pdf`)) {
+        var rkssMerger = new PDFMerger();
+        await rkssMerger.add(`AIP/${effectiveAiracDate}/AD/RKSS/AREA CHART(DEP).pdf`);
+        await rkssMerger.add(`AIP/${effectiveAiracDate}/AD/RKSS/AREA CHART(ARR).pdf`);
 
-    await rkssMerger.save(`AIP/${effectiveAiracDate}/AD/RKSS/AREA CHART.pdf`);
+        await rkssMerger.save(`AIP/${effectiveAiracDate}/AD/RKSS/AREA CHART.pdf`);
 
-    fs.unlinkSync(`AIP/${effectiveAiracDate}/AD/RKSS/AREA CHART - ICAO (DEP).pdf`)
-    fs.unlinkSync(`AIP/${effectiveAiracDate}/AD/RKSS/AREA CHART - ICAO (ARR).pdf`)
+        fs.unlinkSync(`AIP/${effectiveAiracDate}/AD/RKSS/AREA CHART(DEP).pdf`)
+        fs.unlinkSync(`AIP/${effectiveAiracDate}/AD/RKSS/AREA CHART(ARR).pdf`)
+    }
 
     // copy RKSI MSA from RKSI to RKSS
     fs.copyFileSync(
