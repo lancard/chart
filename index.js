@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 if (process.argv.length <= 2) {
-    console.log("usage: node post-index.js 2023-04-22");
+    console.log("usage: node index.js 2023-04-22");
     process.exit(0);
 }
 
@@ -13,7 +13,7 @@ function renameFile(filePath) {
     var dirname = fileInfo.dir;
     var basename = fileInfo.name.split(".pdf").join("");
 
-    if (basename.endsWith("-TEXT.pdf")) {
+    if (basename.endsWith("-TEXT")) {
         fs.renameSync(filePath, path.join(dirname, "TEXT.pdf"));
         return;
     }
