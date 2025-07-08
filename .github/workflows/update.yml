@@ -36,7 +36,7 @@ jobs:
           echo "Found folder: $src_folder"
 
           # 새 폴더 이름으로 변경
-          mv "$src_folder" "${{ github.event.inputs.date }}"
+          mv -f "$src_folder" "${{ github.event.inputs.date }}"
 
           # AIP 폴더가 없으면 생성
           mkdir -p AIP
