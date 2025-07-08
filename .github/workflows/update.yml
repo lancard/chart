@@ -36,12 +36,13 @@ jobs:
           echo "Found folder: $src_folder"
 
           # 새 폴더 이름으로 변경
-          mv -f "$src_folder" "${{ github.event.inputs.date }}"
+          mv "$src_folder" "${{ github.event.inputs.date }}"
 
           # AIP 폴더가 없으면 생성
           mkdir -p AIP
 
           # 이동
+          rm -rf AIP/${{ github.event.inputs.date }}
           mv "${{ github.event.inputs.date }}" AIP/
 
           # 기존 파일 삭제
