@@ -51,10 +51,7 @@ jobs:
           mkdir -p AIP/latest
           cp AIP/${{ github.event.inputs.date }}/* AIP/latest/ -R
 
-      - name: Install npm packages
-        run: npm install
-
-      - name: Run index.js and post-index.js
+      - name: Run rename_pdf.js and merge_and_generate_info.js
         run: |
           node rename_pdf.js ${{ github.event.inputs.date }}
           node merge_and_generate_info.js ${{ github.event.inputs.date }}
