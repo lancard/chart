@@ -18,22 +18,45 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: get zip file from aim
-        run: wget ${{ github.event.inputs.airac_url }}
-        
-      - name: unzip file
-        run: unzip ${{ github.event.inputs.airac_url }}
+      - name: Download ZIP file
+        run: |
+          wget "${{ github.event.inputs.airac_url }}" -O airac.zip
 
-      - name: move
-        run: ls -alR
+      - name: Unzip file
+        run: unzip airac.zip -d airac_contents
 
-      - name: break
-        run: safasfasf
+      - name: Rename and move extracted folder
+        run: |
+          # 실제 폴더명 찾기 (한글 포함되어 있어서 패턴으로 검색)
+          src_folder=$(find airac_contents -maxdepth 1 -type d | head -n 1)
+          echo "Found folder: $src_folder"
 
-      - name: commit changes
+          # 새 폴더 이름으로 변경
+          mv "$src_folder" "${{ github.event.inputs.date }}"
+
+          # AIP 폴더가 없으면 생성
+          mkdir -p AIP
+
+          # 이동
+          mv "${{ github.event.inputs.date }}" AIP/
+
+          # latest 삭제 및 복사
+          rm -rf AIP/latest
+          mkdir -p AIP/latest
+          cp "${{ github.event.inputs.date }}"/* AIP/latest/ -R
+
+      - name: Install npm packages
+        run: npm install
+
+      - name: Run index.js and post-index.js
+        run: |
+          node index.js ${{ github.event.inputs.date }}
+          node post-index.js ${{ github.event.inputs.date }}
+
+      - name: Commit changes
         run: |
           git config user.name github-actions
-          git config user.email github-actions@github.com      
+          git config user.email github-actions@github.com
           git add .
-          git commit -am "module version up"
+          git commit -am "Update AIRAC chart: ${{ github.event.inputs.date }}"
           git push
