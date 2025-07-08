@@ -7,6 +7,10 @@ on:
         description: 'NEW AIRAC URL'
         required: true
         default: 'https://aim.koca.go.kr/eaipPub/Package/2025-07-09-AIRAC/pdf/AIM_AIRAC%20AIP%20AMDT_6_25.zip'
+      date:
+        description: 'NEW AIRAC DATE'
+        required: true
+        default: '2025-07-09'
 
 jobs:
   build:
@@ -22,3 +26,14 @@ jobs:
 
       - name: move
         run: ls -alR
+
+      - name: break
+        run: safasfasf
+
+      - name: commit changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com      
+          git add .
+          git commit -am "module version up"
+          git push
