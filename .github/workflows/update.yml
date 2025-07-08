@@ -74,13 +74,17 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v3
 
+      - name: Move Resources
+        run: |
+          mkdir upload-dir
+          mv index.html upload-dir
+          mv metar-parser.js upload-dir
+          mv AIP upload-dir
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: |
-            index.html
-            metar-parser.js
-            AIP
+          path: upload-dir
 
       - name: Deploy to GitHub Pages
         id: deployment
