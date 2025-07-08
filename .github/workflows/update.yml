@@ -14,10 +14,16 @@ on:
 
 jobs:
   build:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
+      - name: Install npm packages and Update modules
+        run: |
+          npx npm-check-updates -u
+          npm install
+          
       - name: Download ZIP file
         run: |
           wget "${{ github.event.inputs.airac_url }}" -O airac.zip
@@ -60,3 +66,17 @@ jobs:
           git add .
           git commit -am "Update AIRAC chart: ${{ github.event.inputs.date }}"
           git push
+
+
+      # Setup pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
