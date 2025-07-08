@@ -43,7 +43,7 @@ jobs:
           # latest 삭제 및 복사
           rm -rf AIP/latest
           mkdir -p AIP/latest
-          cp "${{ github.event.inputs.date }}"/* AIP/latest/ -R
+          cp AIP/${{ github.event.inputs.date }}/* AIP/latest/ -R
 
       - name: Install npm packages
         run: npm install
