@@ -19,10 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install npm packages and Update modules
-        run: |
-          npx npm-check-updates -u
-          npm install
+      - name: Install npm packages
+        run: npm install
           
       - name: Download ZIP file
         run: |
