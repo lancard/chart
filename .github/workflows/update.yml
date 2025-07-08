@@ -50,8 +50,8 @@ jobs:
 
       - name: Run index.js and post-index.js
         run: |
-          node index.js ${{ github.event.inputs.date }}
-          node post-index.js ${{ github.event.inputs.date }}
+          node rename_pdf.js ${{ github.event.inputs.date }}
+          node merge_and_generate_info.js ${{ github.event.inputs.date }}
 
       - name: Commit changes
         run: |
