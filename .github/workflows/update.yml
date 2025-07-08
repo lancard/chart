@@ -49,6 +49,9 @@ jobs:
           mkdir -p AIP/latest
           cp AIP/${{ github.event.inputs.date }}/* AIP/latest/ -R
 
+          # 기존 파일 삭제
+          rm -rf airac.zip airac_contents
+
       - name: Run rename_pdf.js and merge_and_generate_info.js
         run: |
           node rename_pdf.js ${{ github.event.inputs.date }}
