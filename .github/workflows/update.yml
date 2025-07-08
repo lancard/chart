@@ -1,0 +1,24 @@
+name: Update chart
+
+on:
+  workflow_dispatch:
+    inputs:
+      airac_url:
+        description: 'NEW AIRAC URL'
+        required: true
+        default: 'https://aim.koca.go.kr/eaipPub/Package/2025-07-09-AIRAC/pdf/AIM_AIRAC%20AIP%20AMDT_6_25.zip'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: get zip file from aim
+        run: wget ${{ github.event.inputs.airac_url }}
+        
+      - name: unzip file
+        run: unzip ${{ github.event.inputs.airac_url }}
+
+      - name: move
+        run: ls -alR
