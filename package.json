@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "dayjs": "^1.11.7",
-    "pdf-merger-js": "^4.3.0"
+    "pdf-merger-js": "^4.3.1"
   }
 }
