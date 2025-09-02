@@ -6,11 +6,11 @@ on:
       airac_url:
         description: 'NEW AIRAC URL'
         required: true
-        default: 'https://aim.koca.go.kr/eaipPub/Package/2025-07-09-AIRAC/pdf/AIM_AIRAC%20AIP%20AMDT_6_25.zip'
+        default: 'https://aim.koca.go.kr/eaipPub/Package/2025-08-06-AIRAC/pdf/AIM_AIRAC%20AIP%20AMDT_7_25.zip'
       date:
         description: 'NEW AIRAC DATE'
         required: true
-        default: '2025-07-09'
+        default: '2025-08-06'
 
 jobs:
   build:
