@@ -29,6 +29,19 @@ jobs:
       - name: Unzip file
         run: unzip airac.zip -d airac_contents
 
+      - name: Find and Delete large files (over 100MB)
+        run: |
+          LARGE_FILES=$(find airac_contents -type f -size +100M)
+          if [ -n "$LARGE_FILES" ]; then
+            echo "=== Deleting large files (>100MB) ==="
+            for file in $LARGE_FILES; do
+              echo "Deleting: $file"
+              rm -f "$file"
+            done
+          else
+            echo "No large files found"
+          fi
+
       - name: Rename and move extracted folder
         run: |
           # 실제 폴더명 찾기 (한글 포함되어 있어서 패턴으로 검색)
