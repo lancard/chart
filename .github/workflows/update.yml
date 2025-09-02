@@ -29,7 +29,9 @@ jobs:
         run: unzip airac.zip -d airac_contents
 
       - name: Delete large files (over 100MB)
-        run: find airac_contents -type f -size +100M -exec echo "Deleting: {}" \; -exec rm -f {} \;
+        run: |
+          find airac_contents -type f -size +100M -print
+          find airac_contents -type f -size +100M -delete
 
       - name: Rename and move extracted folder
         run: |
