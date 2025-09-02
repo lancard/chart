@@ -23,24 +23,13 @@ jobs:
         run: npm install
           
       - name: Download ZIP file
-        run: |
-          wget "${{ github.event.inputs.airac_url }}" -O airac.zip
+        run: wget "${{ github.event.inputs.airac_url }}" -O airac.zip
 
       - name: Unzip file
         run: unzip airac.zip -d airac_contents
 
-      - name: Find and Delete large files (over 100MB)
-        run: |
-          LARGE_FILES=$(find airac_contents -type f -size +100M)
-          if [ -n "$LARGE_FILES" ]; then
-            echo "=== Deleting large files (>100MB) ==="
-            for file in $LARGE_FILES; do
-              echo "Deleting: $file"
-              rm -f "$file"
-            done
-          else
-            echo "No large files found"
-          fi
+      - name: Delete large files (over 100MB)
+        run: find airac_contents -type f -size +100M -exec echo "Deleting: {}" \; -exec rm -f {} \;
 
       - name: Rename and move extracted folder
         run: |
