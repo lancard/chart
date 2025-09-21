@@ -36,8 +36,9 @@ jobs:
       - name: Rename and move extracted folder
         run: |
           # 실제 폴더명 찾기 (한글 포함되어 있어서 패턴으로 검색)
-          src_folder=$(find airac_contents/* -maxdepth 1 -type d | head -n 1)
-          echo "Found folder: $src_folder"
+          # src_folder=$(find airac_contents/* -maxdepth 1 -type d | head -n 1)
+          # echo "Found folder: $src_folder"
+          src_folder=airac_contents
 
           # 새 폴더 이름으로 변경
           mv "$src_folder" "${{ github.event.inputs.date }}"
@@ -54,8 +55,8 @@ jobs:
 
       - name: Run rename_pdf.js and merge_and_generate_info.js
         run: |
-          node rename_pdf.js ${{ github.event.inputs.date }}
           ls -alR AIP/${{ github.event.inputs.date }}
+          node rename_pdf.js ${{ github.event.inputs.date }}
           node merge_and_generate_info.js ${{ github.event.inputs.date }}
 
       - name: Copy to latest
