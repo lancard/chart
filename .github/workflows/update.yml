@@ -54,8 +54,8 @@ jobs:
 
       - name: Run rename_pdf.js and merge_and_generate_info.js
         run: |
-          ls -alR AIP/${{ github.event.inputs.date }}
           node rename_pdf.js ${{ github.event.inputs.date }}
+          ls -alR AIP/${{ github.event.inputs.date }}
           node merge_and_generate_info.js ${{ github.event.inputs.date }}
 
       - name: Copy to latest
