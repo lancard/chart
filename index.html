@@ -156,7 +156,7 @@
         }
 
         function updateMetarAndRunway() {
-            $.getJSON('https://lancard.github.io/get_metar/metar.json', (metarList) => {
+            $.getJSON('https://www.vatkor.net/data/korea_metar.json', (metarList) => {
                 for (airport in metarList) {
                     var $template = $("<tr><th airport></th><td style='color: blue;' activeRunway></td><td style='color: green;'></td><td class='text-start' metarText></td></tr>");
                     $template.attr("airport", airport);
@@ -165,7 +165,7 @@
                     $template.appendTo("#metar tbody");
                 }
 
-                $.getJSON('https://lancard.github.io/get_runway/runway.json', (runwayList) => {
+                $.getJSON('https://www.vatkor.net/data/korea_runway.json', (runwayList) => {
                     for (airport in runwayList) {
                         var runwayStringList = [];
                         for (runway in runwayList[airport]) {
